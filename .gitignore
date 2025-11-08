@@ -1,1 +1,7 @@
 /target
+/.idea/.gitignore
+/.idea/Hello_Rust_Web.iml
+/.idea/material_theme_project_new.xml
+/.idea/modules.xml
+/.idea/dictionaries/project.xml
+/.idea/vcs.xml

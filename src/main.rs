@@ -1,4 +1,5 @@
 mod api;
+pub mod core;
 
 use axum::{middleware, Router};
 use std::sync::Arc;
@@ -17,8 +18,8 @@ async fn main() {
         .nest("/employee", employee::router::index::router(state.clone()))
         .route_layer(
             ServiceBuilder::new()
-                .layer(middleware::from_fn(api::common::layer::request_log::process))
-                .layer(middleware::from_fn(api::common::layer::auth::process))
+                .layer(middleware::from_fn(core::layer::request_log::process))
+                .layer(middleware::from_fn(core::layer::auth::process))
         );
     run(app).await;
 }
