@@ -1,9 +1,10 @@
 use crate::core::error::ApiError;
 use crate::employee::model::user::Resp as UserResp;
-use crate::{data_source::postgres, AppState};
+use crate::{data_source::postgres};
 use axum::extract::{Path, State};
 use std::sync::Arc;
 use tracing::instrument;
+use crate::app_state::AppState;
 
 #[instrument(skip(state))]
 pub async fn get_by_id(
@@ -19,6 +20,7 @@ pub async fn get_by_id(
 async fn get_by_id_private(
     Path(id): Path<i32>, State(state): State<Arc<AppState>>
 ) -> Result<UserResp, ApiError> {
+    tracing::info!("Getting user by ID");
     let user = postgres::users::get_by_id(id, &state.pool).await?;
     Ok(UserResp::from(user))
 }

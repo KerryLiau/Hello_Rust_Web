@@ -6,6 +6,7 @@ use axum::{
 };
 use serde::{Deserialize, Serialize};
 use tokio::task_local;
+use tracing::instrument;
 use crate::core::error::ApiError;
 
 #[derive(Serialize, Deserialize, Clone, Debug)]
@@ -17,6 +18,7 @@ task_local! {
     pub static USER: Auth;
 }
 
+#[instrument(skip_all)]
 pub async fn process(req: Request, next: Next) -> Result<Response, ApiError> {
     let auth_header = find_auth_from_header(&req);
     if auth_header.is_err() {

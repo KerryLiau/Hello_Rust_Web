@@ -1,10 +1,14 @@
+use std::any::Any;
 use axum::{
     http::StatusCode,
     response::{IntoResponse, Response},
     Json,
 };
+use axum::body::Body;
 use serde_json::json;
+use tower_http::catch_panic::ResponseForPanic;
 
+#[allow(dead_code)]
 pub enum ApiError {
     Unauthorized(String),
     Forbidden(String),
@@ -58,4 +62,31 @@ impl IntoResponse for ApiError {
         }));
         (self.status_code(), body).into_response()
     }
+}
+
+#[derive(Clone)]
+pub struct MyPanicHandler;
+
+impl ResponseForPanic for MyPanicHandler {
+    type ResponseBody = Body;
+
+    fn response_for_panic(&mut self, _err: Box<dyn Any + Send + 'static>) -> Response<Body> {
+        // 不 log，因為 panic hook 已經 log 了
+        Response::builder()
+            .status(StatusCode::INTERNAL_SERVER_ERROR)
+            .body(Body::from("Internal Server Error"))
+            .unwrap()
+    }
+}
+
+pub fn init_panic_handling() {
+    std::panic::set_hook(Box::new(|panic_info| {
+        let location = panic_info.location();
+        tracing::error!(
+            panic.file = location.map(|l| l.file()),
+            panic.line = location.map(|l| l.line()),
+            panic.message = %panic_info,
+            "panic occurred"
+        );
+    }));
 }
