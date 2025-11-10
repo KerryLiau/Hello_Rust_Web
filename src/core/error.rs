@@ -64,6 +64,27 @@ impl IntoResponse for ApiError {
     }
 }
 
+impl From<sqlx::Error> for ApiError {
+    fn from(e: sqlx::Error) -> Self {
+        match e {
+            sqlx::Error::RowNotFound => ApiError::NotFound(e.to_string()),
+            sqlx::Error::Database(db_err) => ApiError::InternalServerError(db_err.to_string()),
+            sqlx::Error::Io(io_err) => ApiError::InternalServerError(io_err.to_string()),
+            sqlx::Error::ColumnNotFound(_) => ApiError::NotFound(e.to_string()),
+            sqlx::Error::PoolTimedOut => ApiError::InternalServerError(e.to_string()),
+            sqlx::Error::PoolClosed => ApiError::InternalServerError(e.to_string()),
+            sqlx::Error::InvalidArgument(_) => ApiError::BadRequest(e.to_string()),
+            _ => ApiError::InternalServerError(e.to_string()),
+        }
+    }
+}
+
+impl From<std::io::Error> for ApiError {
+    fn from(value: std::io::Error) -> Self {
+        ApiError::InternalServerError(value.to_string())
+    }
+}
+
 #[derive(Clone)]
 pub struct MyPanicHandler;
 
