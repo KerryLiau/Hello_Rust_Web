@@ -19,7 +19,9 @@ pub fn router(state: Arc<AppState>) -> Router {
         .nest("/users",
 
               Router::new()
-                  .route("/{id}", get(services::users::get_by_id))
+                  .route("/{id}", get(services::users::get_by_id)
+                      .put(services::users::update_by_id)
+                  )
                   // .route("/orders", get(get_user_orders))
         )
         .with_state(state)

@@ -6,3 +6,6 @@
 /.idea/dictionaries/project.xml
 /.idea/vcs.xml
 /.idea/dataSources.xml
+
+# Configuration - ignore local overrides
+config/local.toml

@@ -1,0 +1,30 @@
+# Default configuration for Hello Rust Web
+# This file contains the base configuration that applies to all environments
+# Values can be overridden by:
+# - config/development.toml or config/production.toml (based on RUN_MODE env var)
+# - config/local.toml (for local development, should be in .gitignore)
+# - Environment variables with APP_ prefix (e.g., APP_SERVER_PORT=9000)
+
+# Application settings
+app_resource = "Hello World"
+
+# Database configuration
+[database]
+url = "postgres://postgres:@localhost:5432"
+max_connections = 3
+min_connections = 1
+idle_timeout_secs = 300   # 5 minutes
+max_lifetime_secs = 1800  # 30 minutes
+acquire_timeout_secs = 3
+
+# Server configuration
+[server]
+host = "127.0.0.1"
+port = 8080
+
+# OpenTelemetry configuration
+[otel]
+endpoint = "http://localhost:4317"
+service_name = "hello-rust-web"
+timeout_secs = 3
+log_level = "info"

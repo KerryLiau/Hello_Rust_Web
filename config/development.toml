@@ -1,0 +1,19 @@
+# Development environment configuration
+# This file is loaded when RUN_MODE=development (default)
+# Values here override config/default.toml
+
+# Development-specific settings
+app_resource = "Hello World - Development"
+
+# Database configuration for development
+[database]
+# url = "postgres://postgres:password@localhost:5432/dev_db"
+
+# Server configuration for development
+[server]
+# host = "0.0.0.0"  # Uncomment to listen on all interfaces
+# port = 3000       # Uncomment to use different port
+
+# OpenTelemetry configuration for development
+[otel]
+log_level = "debug"  # More verbose logging in development

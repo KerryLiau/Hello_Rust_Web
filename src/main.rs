@@ -1,5 +1,6 @@
 mod api;
 mod app_state;
+mod config;
 mod core;
 mod data_source;
 
@@ -10,17 +11,21 @@ use tower_http::{catch_panic::CatchPanicLayer, trace::TraceLayer};
 
 #[tokio::main]
 async fn main() {
+    // Load configuration
+    let settings = config::Settings::load()
+        .expect("Failed to load configuration");
+
     core::error::init_panic_handling();
-    let tracer_provider = core::otel::init();
-    run_server().await;
+    let tracer_provider = core::otel::init(&settings.otel);
+    run_server(settings).await;
     // CRITICAL: Shutdown tracer provider to flush remaining spans
     tracer_provider
         .shutdown()
         .expect("Failed to shutdown tracer provider");
 }
 
-async fn run_server() {
-    let state = app_state::init().await;
+async fn run_server(settings: config::Settings) {
+    let state = app_state::init(&settings).await;
     let router = Router::new()
         // routing api
         .nest("/employee", employee::router(state.clone()))
@@ -33,7 +38,8 @@ async fn run_server() {
                 .layer(CatchPanicLayer::custom(core::error::MyPanicHandler)),
         );
     // start server
-    let listener = tokio::net::TcpListener::bind("127.0.0.1:8080")
+    let bind_addr = format!("{}:{}", settings.server.host, settings.server.port);
+    let listener = tokio::net::TcpListener::bind(&bind_addr)
         .await
         .unwrap();
     tracing::info!("listening on {}", listener.local_addr().unwrap());

@@ -1,0 +1,22 @@
+# Production environment configuration
+# This file is loaded when RUN_MODE=production
+# Values here override config/default.toml
+
+# Production-specific settings
+app_resource = "Hello World - Production"
+
+# Database configuration for production
+[database]
+# url = "postgres://prod_user:secure_password@db.example.com:5432/prod_db"
+max_connections = 10
+min_connections = 2
+
+# Server configuration for production
+[server]
+host = "0.0.0.0"  # Listen on all interfaces in production
+port = 8080
+
+# OpenTelemetry configuration for production
+[otel]
+# endpoint = "http://jaeger-collector:4317"
+log_level = "info"
