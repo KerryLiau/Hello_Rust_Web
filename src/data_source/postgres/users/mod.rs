@@ -16,7 +16,7 @@ pub struct Entity {
 
 #[tracing::instrument(skip(conn))]
 pub async fn get_by_id(id: i32, conn: &Pool<Postgres>) -> Result<Entity, ApiError> {
-    let mut tx = conn.begin().await.unwrap();
+    let mut tx = conn.begin().await?;
     let query = "SELECT * FROM users WHERE id = $1";
     let user = sqlx::query_as::<_, Entity>(query)
         .bind(id)
