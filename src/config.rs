@@ -6,6 +6,7 @@ use std::env;
 #[derive(Debug, Clone, Deserialize)]
 pub struct Database {
     /// Database connection URL (e.g., postgres://user:password@localhost:5432/dbname)
+    #[serde(default = "default_url")]
     pub url: String,
     /// Maximum number of connections in the pool
     pub max_connections: u32,
@@ -17,6 +18,10 @@ pub struct Database {
     pub max_lifetime_secs: u64,
     /// Acquire timeout in seconds
     pub acquire_timeout_secs: u64,
+}
+
+fn default_url() -> String {
+    "postgres://postgres:@localhost:5432".to_string()
 }
 
 /// Server configuration
